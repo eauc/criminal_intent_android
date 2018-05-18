@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DatePicker
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_date_picker"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:calendarViewShown="false" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_date"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-</DatePicker>
+    <DatePicker xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/dialog_date_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/dialog_date_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@android:string/ok"
+        app:layout_constraintTop_toBottomOf="@id/dialog_date_picker"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
