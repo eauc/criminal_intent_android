@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ import java.util.List;
 public class CrimeListFragment extends Fragment {
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
+    private TextView mNoCrimesTextView;
+    private Button mNoCrimesButton;
     private RecyclerView mCrimeListRecyclerView;
     private CrimeAdapter mCrimeAdapter;
     private boolean mSubtitleVisible;
@@ -37,6 +40,15 @@ public class CrimeListFragment extends Fragment {
         if (savedStateInstance != null) {
             mSubtitleVisible = savedStateInstance.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
+
+        mNoCrimesTextView = (TextView)view.findViewById(R.id.no_crimes_textview);
+        mNoCrimesButton = (Button)view.findViewById(R.id.no_crimes_button);
+        mNoCrimesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newCrime();
+            }
+        });
 
         mCrimeListRecyclerView = (RecyclerView)view.findViewById(R.id.crime_recycler_view);
         mCrimeListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -76,10 +88,7 @@ public class CrimeListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.new_crime:
             {
-                Crime crime = new Crime();
-                CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                newCrime();
                 return true;
             }
             case R.id.show_subtitle:
@@ -96,6 +105,13 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
+    private void newCrime() {
+        Crime crime = new Crime();
+        CrimeLab.get(getActivity()).addCrime(crime);
+        Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+        startActivity(intent);
+    }
+
     private void updateUI() {
         CrimeLab lab = CrimeLab.get(getActivity());
         List<Crime> crimes = lab.getCrimes();
@@ -105,6 +121,14 @@ public class CrimeListFragment extends Fragment {
             mCrimeListRecyclerView.setAdapter(mCrimeAdapter);
         } else {
             mCrimeAdapter.notifyDataSetChanged();
+        }
+
+        if(CrimeLab.get(getActivity()).getCrimes().isEmpty()) {
+            mNoCrimesTextView.setVisibility(View.VISIBLE);
+            mNoCrimesButton.setVisibility(View.VISIBLE);
+        } else {
+            mNoCrimesTextView.setVisibility(View.GONE);
+            mNoCrimesButton.setVisibility(View.GONE);
         }
 
         updateSubtitle();
