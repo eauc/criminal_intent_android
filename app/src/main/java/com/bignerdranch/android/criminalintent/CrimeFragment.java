@@ -1,14 +1,19 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -38,6 +43,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckbox;
     private Button mSuspectButton;
     private Button mReportButton;
+    private Button mConfrontButton;
 
     public static CrimeFragment newInstance(UUID crime_id) {
         Bundle args = new Bundle();
@@ -131,6 +137,47 @@ public class CrimeFragment extends Fragment {
         if (packageManager.resolveActivity(pickContact,
                 PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
+        }
+
+        mConfrontButton = (Button)v.findViewById(R.id.crime_confront_suspect);
+        mConfrontButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String suspect = mCrime.getSuspect();
+                if (suspect == null) {
+                    return;
+                }
+                ContentResolver cr = getActivity().getContentResolver();
+                Cursor contactCursor = cr.query(Contacts.CONTENT_URI, null,
+                        "DISPLAY_NAME = '"+ suspect +"'", null, null);
+                try {
+                    if(contactCursor.getCount() == 0) {
+                        return;
+                    }
+                    contactCursor.moveToFirst();
+                    String contactId = contactCursor.getString(contactCursor.getColumnIndex(Contacts._ID));
+                    Cursor phonesCursor = cr.query(Phone.CONTENT_URI, null,
+                            Phone.CONTACT_ID + " = " + contactId, null, null);
+                    try {
+                        if(phonesCursor.getCount() == 0) {
+                            return;
+                        }
+                        phonesCursor.moveToFirst();
+                        String number = phonesCursor.getString(phonesCursor.getColumnIndex(Phone.NUMBER));
+                        Uri numberUri = Uri.parse("tel:" + number);
+                        Intent intent = new Intent(Intent.ACTION_DIAL, numberUri);
+                        startActivity(intent);
+                    } finally {
+                        phonesCursor.close();
+                    }
+                } finally {
+                    contactCursor.close();
+                }
+            }
+        });
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            mConfrontButton.setEnabled(false);
         }
 
         return v;

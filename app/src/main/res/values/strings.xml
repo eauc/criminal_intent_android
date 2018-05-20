@@ -13,6 +13,7 @@
     <string name="subtitle_format">%1$d crimes</string>
     <string name="choose_suspect">Choose suspect</string>
     <string name="send_report">Send crime report</string>
+    <string name="confront_suspect">Confront suspect</string>
     <string name="crime_report">%1$s!
         The crime was discovered on %2$s. %3$s, and %4$s
     </string>
