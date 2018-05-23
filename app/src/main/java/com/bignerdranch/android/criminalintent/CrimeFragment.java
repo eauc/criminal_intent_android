@@ -61,9 +61,8 @@ public class CrimeFragment extends Fragment {
     private File mPhotoFile;
     private Callbacks mCallbacks;
 
-    public interface Callbacks {
+    public interface Callbacks extends CrimeListFragment.Callbacks {
         void onCrimeUpdated(Crime crime);
-        void onCrimeDeleted(Fragment fragment);
     }
 
     public static CrimeFragment newInstance(UUID crime_id) {
@@ -73,6 +72,10 @@ public class CrimeFragment extends Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public Crime getCrime() {
+        return mCrime;
     }
 
     @Override
@@ -316,7 +319,7 @@ public class CrimeFragment extends Fragment {
             case R.id.delete_crime:
             {
                 CrimeLab.get(getActivity()).deleteCrime(mCrime.getId());
-                mCallbacks.onCrimeDeleted(this);
+                mCallbacks.onCrimeDeleted(mCrime);
                 return true;
             }
             default:

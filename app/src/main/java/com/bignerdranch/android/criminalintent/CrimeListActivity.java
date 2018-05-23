@@ -2,9 +2,12 @@ package com.bignerdranch.android.criminalintent;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 public class CrimeListActivity extends SingleFragmentActivity
-        implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks {
+        implements CrimeFragment.Callbacks {
+    private static final String TAG = "CrimeListActivity";
+
     @Override
     protected Fragment createFragment() {
         return new CrimeListFragment();
@@ -36,14 +39,24 @@ public class CrimeListActivity extends SingleFragmentActivity
     }
 
     @Override
-    public void onCrimeDeleted(Fragment fragment) {
-        if (findViewById(R.id.detail_fragment_container) != null) {
+    public void onCrimeDeleted(Crime crime) {
+        CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
+        listFragment.updateUI();
+        Log.d(TAG, "onCrimeDeleted()");
+        CrimeFragment crimeFragment = (CrimeFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.detail_fragment_container);
+        if (crimeFragment != null) {
+            Crime currentCrimeDetail = crimeFragment.getCrime();
+            Log.d(TAG, "onCrimeDeleted() detail " + currentCrimeDetail.getId() + ", " + crime.getId());
+            if (currentCrimeDetail.getId().compareTo(crime.getId()) != 0) {
+                return;
+            }
+
+            Log.d(TAG, "onCrimeDeleted() remove");
             getSupportFragmentManager().beginTransaction()
-                    .remove(fragment)
+                    .remove(crimeFragment)
                     .commit();
-            CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_container);
-            listFragment.updateUI();
         }
     }
 }

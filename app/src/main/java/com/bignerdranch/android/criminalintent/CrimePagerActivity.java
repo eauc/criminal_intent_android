@@ -63,7 +63,10 @@ public class CrimePagerActivity extends AppCompatActivity
     public void onCrimeUpdated(Crime crime) {}
 
     @Override
-    public void onCrimeDeleted(Fragment fragment) {
+    public void onCrimeSelected(Crime crime) {}
+
+    @Override
+    public void onCrimeDeleted(Crime crime) {
         finish();
     }
 }
