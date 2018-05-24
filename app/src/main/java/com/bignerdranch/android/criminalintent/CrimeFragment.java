@@ -31,11 +31,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.text.format.DateFormat;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -336,15 +336,15 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updateDate() {
-        mDateButton.setText(mCrime.getDate().toString());
+        String date = DateFormat.getDateInstance().format(mCrime.getDate());
+        mDateButton.setText(date);
     }
 
     private String getCrimeReport() {
         String solvedString = mCrime.isSolved() ?
                 getString(R.string.crime_report_solved) :
                 getString(R.string.crime_report_unsolved);
-        String dateFormat = "EEE, MMM dd";
-        String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
+        String dateString = DateFormat.getDateInstance().format(mCrime.getDate());
         String suspect = mCrime.getSuspect();
         if (suspect == null) {
             suspect = getString(R.string.crime_report_no_suspect);
